@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import axios from 'axios';
 import toast from "react-hot-toast";
 import {io} from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 const backedUrl=import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL=backedUrl;
 
@@ -30,7 +31,7 @@ export const AuthProvider = ({children})=>{
 
 
     //login function to handle user authentication and socket connection
-const login = async(startTransition,credetials)=>{
+const login = async(state,credetials)=>{
     try{
         const {data}= await axios.post(`/api/auth/${state}`,credetials);
         if(data.success)
@@ -67,6 +68,37 @@ const login = async(startTransition,credetials)=>{
             setOnlineUser(userIds);
         })
     } 
+
+    //Logout function to handle juser logout and socket disconnection
+    const logout = async()=>{
+      localStorage.removeItem("token");
+        setToken(null);
+        setAuthUser(null);
+        setOnlineUser([]);
+        axios.defaults.headers.common["token"]=null;
+        toast.success("Logged out successfully");
+        socket.disconnect();
+        navigate("/");
+        
+      
+    }
+    //update profile function to handle user profile updates
+    const updateProfile= async(body)=>{
+      try{
+        const {data} = await axios.put("/api/auth/update-profile",body);
+        if(data.success)
+        {
+          setAuthUser(data.user);
+          toast.success("Profile updated successfully");
+        }
+
+      }
+      catch(error)
+      {
+        toast.error(error.message);
+
+      }
+    }
     useEffect(()=>{
         if(token)
         {
@@ -78,7 +110,11 @@ const login = async(startTransition,credetials)=>{
         axios,
         authUser,
         onlineUser,
-        socket
+        socket,
+        login,
+        logout,
+        updateProfile
+
     }
     return (
         <AuthContext.Provider value={value}>
