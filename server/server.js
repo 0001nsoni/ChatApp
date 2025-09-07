@@ -38,7 +38,7 @@ app.use("/api/messages", messageRouter);
 //connect to DB
 
 await connectDB();
-if(process.env.NODE_ENV!=="production")
+if(process.env.NODE_ENV!=="Production")
 {
 
   const PORT = process.env.PORT||5000;
