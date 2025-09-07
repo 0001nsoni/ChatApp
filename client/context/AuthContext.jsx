@@ -106,6 +106,14 @@ const login = async(state,credetials)=>{
         }
         checkAuth();
     })
+    useEffect(() => {
+      if (socket) {
+        socket.on("getOnlineUsers", (users) => {
+          setOnlineUser(users);
+        });
+        return () => socket.off("getOnlineUsers");
+      }
+    }, [socket]);
     const value={
         axios,
         authUser,

@@ -33,7 +33,8 @@ app.use(express.json({limit:"4mb"}));
 app.use(cors());
 app.use("/api/status",(req,res)=>res.send("Server is live"));
 app.use("/api/auth",userRouter);
-app.use("/api/meesages",messageRouter);
+app.use("/api/messages", messageRouter);
+
 //connect to DB
 
 await connectDB();
